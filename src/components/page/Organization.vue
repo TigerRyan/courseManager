@@ -27,7 +27,7 @@ export default {
 
 </script>
 
-<style less='lang' scoped>
+<style lang='less' scoped>
 .organization {
   width: 100%;
   font-size: 14px;
