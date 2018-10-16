@@ -1,5 +1,5 @@
 <template>
-    <div class="table">
+    <div class="studentManager">
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-lx-friend"></i> 学生管理</el-breadcrumb-item>
@@ -40,9 +40,9 @@
             </el-row>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="date" label="日期" sortable width="150">
+                <el-table-column prop="name" label="学生姓名" width="120">
                 </el-table-column>
-                <el-table-column prop="name" label="姓名" width="120">
+                <el-table-column prop="date" label="日期" sortable width="150">
                 </el-table-column>
                 <el-table-column prop="address" label="地址" :formatter="formatter">
                 </el-table-column>
@@ -225,7 +225,7 @@ export default {
   font-size: 16px;
   text-align: center;
 }
-.table {
+.studentManager {
   width: 100%;
   font-size: 14px;
 }
