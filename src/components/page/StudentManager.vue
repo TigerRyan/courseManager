@@ -77,18 +77,19 @@
         </div>
         <!-- 编辑弹出框 -->
         <el-dialog :title="form.tip" :visible.sync="form.editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="80px">
-                <el-form-item label="学生学号">
-                    <el-input v-model="form.studentId" :min="0" placeholder="请输入学生学号"></el-input>
+            <el-form ref="form" :rules="rules" :model="form" label-width="80px">
+                <el-form-item label="学生学号" prop="studentId">
+                    <el-input v-model.number="form.studentId" :min="0" placeholder="请输入学生学号"></el-input>
                     <!-- <el-input v-model="form.name"></el-input> -->
                 </el-form-item>
-                <el-form-item label="学生姓名">
+                <el-form-item label="学生姓名" prop="name">
                     <el-input v-model="form.name" placeholder="请输入学生姓名,不超过20个字符"></el-input>
                 </el-form-item>
-                <el-form-item label="出生日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
+                <!-- value-format="yyyy-MM-dd" -->
+                <el-form-item label="出生日期" prop="date">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date"  style="width: 100%;"></el-date-picker>
                 </el-form-item>
-                <el-form-item label="学生性别">
+                <el-form-item label="学生性别" prop="gender">
                     <el-radio-group v-model="form.gender">
                         <el-radio :label="1">男</el-radio>
                         <el-radio :label="0">女</el-radio>
@@ -112,7 +113,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="form.editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
+                <el-button type="primary" @click="saveEdit('form')">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 删除提示框 -->
@@ -132,6 +133,22 @@ export default {
     name: 'studentManager',
     data() {
         return {
+            rules: {
+                name: [
+                    { required: true, trigger: 'blur', message: '姓名不能为空' },
+                    { pattern: /^([\u4e00-\u9fa5]{2,10})$/, message: '长度在2到10位中文字符', trigger: 'blur' }
+                ],
+                studentId: [
+                    { required: true, message: '学号不能为空...', trigger: 'blur' },
+                    { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }
+                ],
+                date: [
+                    { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+                ],
+                gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
+                grade: [{ required: true, message: '请选择活动年级', trigger: 'change' }],
+                class: [{ required: true, message: '请选择活动班级', trigger: 'change' }]
+            },
             // 后期开发有用
             tableData: [],
             form: {
@@ -173,7 +190,6 @@ export default {
             select_cate: '',
             select_word: '',
             del_list: [],
-            is_search: false,
             delVisible: false,
 
             idx: -1
@@ -223,7 +239,6 @@ export default {
             this.tableData = list
         },
         search() {
-            this.is_search = true;
         },
         formatter(row, column) {
             return row.address;
@@ -273,10 +288,19 @@ export default {
             this.multipleSelection = val;
         },
         // 保存编辑
-        saveEdit() {
-            this.$set(this.tableData, this.idx, this.form);
-            this.form.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+        saveEdit(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.$set(this.tableData, this.idx, this.form);
+                    this.form.editVisible = false;
+                    this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                    alert('submit!');
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+
         },
         // 确定删除
         deleteRow() {
